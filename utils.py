@@ -7,7 +7,7 @@ def change_user_permissions():
 	user_model = get_user_model()
 	selection = input('enter a username, type "all" to select a name from the list, or type "q" to quit:')
 	selected_user = user_model.objects.filter(username=selection)
-	while not selected_user.count and selection != 'q':
+	while not selected_user.count or selection != 'q':
 		selection = input('command not recognized or no user by that name was found. \
 			enter a username, type "all" to select a name from the list, or type "q" to quit:')
 		if selection == 'q':
@@ -39,9 +39,11 @@ def change_user_permissions():
 
 
 def create_user(username):
-	alphabet = string.ascii_letters
+	alphanum = string.ascii_letters + '0123456789'
 	password = ''
+	alphanum = ''.join(random.sample(alphanum, len(alphanum)))
 	for _ in range(10):
-		password += random.randint(0, len(alphabet)-1)
+		password += alphanum[random.randint(0, len(alphanum)-1)]
 	get_user_model().create_user(username=username, password=password)
+	print(password)
 	return 
