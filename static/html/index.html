@@ -3,6 +3,8 @@
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<title>Title Goes Here</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
 </head>
 <body>
 	<style>
@@ -28,13 +30,85 @@
 		<br>
 		<button class="btn btn-primary btn-lg btn-block">admin</button>
 	</div>
+
+	<div class="modal fade photo-upload-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	  	<div class="modal-dialog modal-lg">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<h5 class="modal-title">Preview</h5>
+	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          			<span aria-hidden="true">&times;</span>
+	        		</button>
+	      		</div>
+      		<div class="modal-body-preview">
+        		<img id="preview-body" src="#">
+      		</div>
+	      	<div class="modal-footer">
+	        	<button type="button" id="modal-submit" class="btn btn-primary">Submit</button>
+	        	<button type="button" id="modal-cancel" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	        	<button type="button" id="modal-download" class="btn btn-default" href="" download>Save Image</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
+	<div class="modal fade auth-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	  	<div class="modal-dialog modal-sm">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<h5 class="modal-title">Log In</h5>
+	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          			<span aria-hidden="true">&times;</span>
+	        		</button>
+	      		</div>
+      		<div class="modal-body-auth">
+      			<div class="box">
+	      			<label for="username">Username: </label>
+	        		<input type="text" id="username">
+	        		<br>
+	        		<label for="password">Password: </label>
+	        		<input type="text" id="password">
+	        	</div>
+      		</div>
+	      	<div class="modal-footer">
+	        	<button type="button" class="btn btn-primary">Submit</button>
+	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
 </body>
 <script>
-	document.getElementById('photo-input').addEventListener('change', function(){
+	let photoUpload = document.getElementById('photo-input');
+
+	photoUpload.addEventListener('change', function(e){
 		window.onbeforeunload = function(e) {
             return true;
         };
 	});
+
+	// photoUpload.addEventListener('click', function(e){
+	// 	e.preventDefault();
+	// 	$('.auth-modal-lg').modal('show');
+	// })
+
+	// photoUpload.addEventListener('click', function(){
+	// 	if (photoUpload.files && photoUpload.files[0]){
+	// 		$('.photo-upload-modal-lg').modal('show');
+	// 	}
+	// })
+
+	photoUpload.addEventListener('change', function(){
+		if (photoUpload.files && photoUpload.files[0]){
+			let reader = new FileReader();
+			reader.readAsDataURL(photoUpload.files[0]);
+			reader.onload = function(e){
+				document.getElementById('preview-body').setAttribute('src', e.target.result);
+				document.getElementById('modal-download').setAttribute('href', e.target.result);
+			}
+		}
+		$('.photo-upload-modal-lg').modal('show');
+	})
 
 </script>
 </html>
