@@ -79,6 +79,9 @@
 	</div>
 </body>
 <script>
+	if (!navigator.maxTouchPoints){
+		alert("This app works best on a mobile browser!");
+	}
 	let photoUpload = document.getElementById('photo-input');
 
 	photoUpload.addEventListener('change', function(e){
@@ -87,16 +90,12 @@
         };
 	});
 
-	// photoUpload.addEventListener('click', function(e){
-	// 	e.preventDefault();
-	// 	$('.auth-modal-lg').modal('show');
-	// })
-
-	// photoUpload.addEventListener('click', function(){
-	// 	if (photoUpload.files && photoUpload.files[0]){
-	// 		$('.photo-upload-modal-lg').modal('show');
-	// 	}
-	// })
+	photoUpload.addEventListener('click', function(e){
+		if (!navigator.maxTouchPoints){
+			e.preventDefault();
+			alert("This app works best on a mobile browser!");
+		}
+	})
 
 	photoUpload.addEventListener('change', function(){
 		if (photoUpload.files && photoUpload.files[0]){
@@ -117,8 +116,23 @@
 		xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
 		xhr.open('POST', 'drf-endpoint-here');
 		xhr.send(document.getElementById('preview-body').getattribute('src'));
-	}
+	})
 
 
+	function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
 </html>
