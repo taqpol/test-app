@@ -115,12 +115,13 @@
 		let xhr = new XMLHttpRequest();
 		xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
 		xhr.open('POST', 'drf-endpoint-here');
-		xhr.onprogress = function(){
+		xhr.loadstart = function(){
 			window.onbeforeunload = function(e){
 				return true;
 			}
+			$('.photo-upload-modal-lg').modal('hide');
 		}
-		xhr.onload = function(){
+		xhr.loadend = function(){
 			window.onbeforeunload = undefined;
 		}
 		xhr.send(document.getElementById('preview-body').getattribute('src'));
