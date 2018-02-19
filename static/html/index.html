@@ -115,6 +115,14 @@
 		let xhr = new XMLHttpRequest();
 		xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
 		xhr.open('POST', 'drf-endpoint-here');
+		xhr.onprogress = function(){
+			window.onbeforeunload = function(e){
+				return true;
+			}
+		}
+		xhr.onload = function(){
+			window.onbeforeunload = undefined;
+		}
 		xhr.send(document.getElementById('preview-body').getattribute('src'));
 	})
 
