@@ -2,6 +2,8 @@ from rest_framework import permissions, status, authentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from files.models import Image
+
 from django.contrib.auth import get_user_model
 
 class FileUploadView(APIView):
@@ -20,7 +22,7 @@ class FileUploadView(APIView):
         policy_expires = int(time.time()+5000)
         user = request.user
 
-        file_obj = RequestFileItem.objects.create(user=user, name=filename_req)
+        file_obj = Image.objects.create(user=user, name=filename_req)
         file_obj_id = file_obj.id
         upload_start_path = "{username}/{file_obj_id}/".format(
                     username = request.user,
