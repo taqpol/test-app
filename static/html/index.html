@@ -19,6 +19,20 @@
 		text-align: center;
 	}
 
+	.loader {
+	    border: 6px solid #f3f3f3; /* Light grey */
+	    border-top: 6px solid #3498db; /* Blue */
+	    border-radius: 50%;
+	    width: 30px;
+	    height: 30px;
+	    animation: spin 2s linear infinite;
+	}
+
+	@keyframes spin {
+	    0% { transform: rotate(0deg); }
+	    100% { transform: rotate(360deg); }
+	}
+
 /*	.btn-block {
 		padding: 10%;
 	}*/
@@ -62,15 +76,14 @@
 	        		</button>
 	      		</div>
       		<div class="modal-body-auth">
-      			<div class="box">
-	      			<label for="username">Username: </label>
-	        		<input type="text" id="username">
-	        		<br>
-	        		<label for="password">Password: </label>
-	        		<input type="text" id="password">
-	        	</div>
+      			<label for="username">Username: </label>
+        		<input type="text" id="username">
+        		<br>
+        		<label for="password">Password: </label>
+        		<input type="text" id="password">
       		</div>
 	      	<div class="modal-footer">
+	      		<div id="loader"></div>
 	        	<button type="button" class="btn btn-primary" id="auth-submit">Submit</button>
 	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
       		</div>
@@ -82,6 +95,7 @@
 	if (!navigator.maxTouchPoints){
 		alert("This app works best on a mobile browser!");
 	}
+
 	let photoUpload = document.getElementById('photo-input');
 
 	photoUpload.addEventListener('change', function(e){
@@ -125,6 +139,22 @@
 			window.onbeforeunload = undefined;
 		}
 		xhr.send(document.getElementById('preview-body').getattribute('src'));
+	})
+
+	let authSubmit = document.getElementById('auth-submit');
+
+	authSubmit.addEventListener('click', function(){
+		let xhr = new XMLHttpRequest();
+		xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
+		xhr.open('POST', 'login-endpoint-here');
+		xhr.loadstart = function(){
+			document.getElementById('loader').classList.add('loader');
+			document.getElementById('auth-submit').disabled = true
+		}
+		xhr.loadend = function(){
+			document.getElementById('auth-submit').disabled = false
+			document.getElementById('loader').classList.remove('loader')
+		}
 	})
 
 
