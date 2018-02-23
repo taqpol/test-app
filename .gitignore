@@ -1,2 +1,5 @@
 
 *.env
+slideshow/devsettings.py
+*.pyc
+*.pyc

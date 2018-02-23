@@ -3,11 +3,11 @@ from django.db import models
 import boto3
 
 class Image(models.Model):
-	name = models.CharField(max_length=50)
-	path = models.TextField()
-	uploaded_by = models.CharField(max_length=10, null=True, blank=True)
-	created = models.DateTimeField(auto_now_add=True)
-	excluded = BooleanField(default=False)
+    name = models.CharField(max_length=50)
+    path = models.TextField()
+    uploaded_by = models.CharField(max_length=10, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    excluded = models.BooleanField(default=False)
 
     @property
     def url(self):

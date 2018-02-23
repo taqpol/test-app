@@ -7,15 +7,16 @@ from files.models import Image
 from django.contrib.auth import get_user_model
 
 class FileUploadView(APIView):
-	permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [authentication.SessionAuthentication]
-	def post(self, request, *args, **kwargs):
+
+    def post(self, request, *args, **kwargs):
         filename_req = request.data.get('filename')
         if not filename_req:
             return Response({"message": "A filename is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         if not get_user_model().objects.get(name=request.user).is_active:
-        	return Response({'message': "You don't have permission to do that."}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'message': "You don't have permission to do that."}, status=status.HTTP_403_FORBIDDEN)
         # elif filename_req.split('.')[-1] not in ['pdf', 'xlsx', 'xls', 'jpeg', 'jpg', 'png', 'dwf']:
         #     return Response({"message": "Invalid file extension"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -112,4 +113,7 @@ class FileUploadCompleteView(APIView):
         request.session['file_object_ids'].append(obj.id)
         request.session.modified = True
 
-        return Response(data, status=status.HTTP_200_OK)	
+        return Response(data, status=status.HTTP_200_OK)    
+
+file_policy_view = FileUploadView.as_view()
+file_upload_complete_view = FileUploadCompleteView.as_view()
