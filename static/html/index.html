@@ -129,6 +129,7 @@
 		let xhr = new XMLHttpRequest();
 		xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
 		xhr.open('POST', 'drf-endpoint-here');
+		// xhr.withCredentials = true;
 		xhr.loadstart = function(){
 			window.onbeforeunload = function(e){
 				return true;
@@ -146,7 +147,8 @@
 	authSubmit.addEventListener('click', function(){
 		let xhr = new XMLHttpRequest();
 		xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
-		xhr.open('POST', 'login-endpoint-here');
+		xhr.open('POST', 'login-endpoint-here', false, document.getElementById('username'), 
+			document.getElementById('password'));
 		xhr.loadstart = function(){
 			document.getElementById('loader').classList.add('loader');
 			document.getElementById('auth-submit').disabled = true
@@ -155,6 +157,13 @@
 			document.getElementById('auth-submit').disabled = false
 			document.getElementById('loader').classList.remove('loader')
 		}
+		// use this to retrieve and set authentication tokens
+		xhr.onreadystatechange = function(){
+			if (xhr.readyState === 4){
+				console.log(xhr.response);
+			}
+		}
+		xhr.send();
 	})
 
 
