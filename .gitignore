@@ -1,8 +1,5 @@
 
 *.env
-slideshow/devsettings.py
-*.pyc
-*.pyc
 *.sqlite3
 *.pyc
-slideshow/__pycache__/__init__.cpython-35.pyc
+slideshow/devsettings.py
