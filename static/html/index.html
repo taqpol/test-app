@@ -129,11 +129,8 @@
 	//to create file progress uploader
 	//add function to upload to s3 bucket
 	imageSubmit.addEventListener('click', function(e){
-		let xhr = new XMLHttpRequest();
-		xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
-		xhr.open('POST', 'aws-endpoint-here');
-		// xhr.withCredentials = true;
 		xhr.loadstart = function(){
+			let policyData = getPolicyData(photoUpload.files[0]);
 			window.onbeforeunload = function(e){
 				return true;
 			}
@@ -189,6 +186,7 @@
     function getPolicyData(file){
     	let policyData;
     	xhr = new XMLHttpRequest();
+    	xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
     	xhr.open('POST', 'file-upload-policy-endpoint-here');
     	// xhr.withCredentials = true;
     	xhr.error = function(){
@@ -204,27 +202,27 @@
     }
     	
 
-    function constructAWSPolicy(file, policyData){
-    	let contentType = file.type != '' ? fileItem.type : 'application/octet-stream'
+    function constructAWSFormPolicy(file, policyData){
+    	//define default data type if none present
+    	let contentType = file.type != '' ? fileItem.type : 'application/octet-stream';
+    	let url = policyData.url;
+    	let fileName = policyData.fileName;
+    	let user = policyData.user;
+    	let bucketPath = policyData.file_bucket_path;
+    	let fileData = new FormData();
+
+    	fileData.append('key', bucketPath + fileName);
+    	fileData.append('acl', 'private');
+    	fileData.append('Content-Type', contentType);
+    	fileData.append('AWSAccessKeyId', policyData.key);
+    	fileData.append('Policy', policyData.policy);
+    	fileData.append('filename', fileName);
+    	fileData.append('Signature', policyData.signature);
+    	fileData.append('file', file);
+    	return fileData
+
     }
-    function constructFormPolicyData(policyData, fileItem) {
-        var contentType = fileItem.type != '' ? fileItem.type : 'application/octet-stream'
-        var url = policyData.url
-        var filename = policyData.filename
-        var repsonseUser = policyData.user
-        // var keyPath = 'www/' + repsonseUser + '/' + filename
-        var keyPath = policyData.file_bucket_path
-        var fd = new FormData()
-        fd.append('key', keyPath + filename);
-        fd.append('acl','private');
-        fd.append('Content-Type', contentType);
-        fd.append("AWSAccessKeyId", policyData.key)
-        fd.append('Policy', policyData.policy);
-        fd.append('filename', filename);
-        fd.append('Signature', policyData.signature);
-        fd.append('file', fileItem);
-        return fd
-    }
+
     
 </script>
 </html>
