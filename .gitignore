@@ -1,0 +1,7 @@
+
+files/__pycache__/admin.cpython-35.pyc
+files/__pycache__/__init__.cpython-35.pyc
+files/__pycache__/models.cpython-35.pyc
+*.pyc
+*.sqlite3
+*.env
