@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 files/__pycache__/admin.cpython-35.pyc
 files/__pycache__/__init__.cpython-35.pyc
 files/__pycache__/models.cpython-35.pyc
@@ -6,4 +7,11 @@ files/__pycache__/models.cpython-35.pyc
 *.sqlite3
 *.env
 *.pyc
+*.pyc
+=======
+*.env
+*.sqlite3
+*.pyc
+slideshow/devsettings.py
+>>>>>>> parent of c819125... Revert "Merge branch 'javascript' into staging"
 *.pyc
