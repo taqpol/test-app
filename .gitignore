@@ -1,5 +1,0 @@
-
-*.env
-*.sqlite3
-*.pyc
-slideshow/devsettings.py
