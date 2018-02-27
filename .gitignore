@@ -10,8 +10,16 @@ files/__pycache__/models.cpython-35.pyc
 *.pyc
 =======
 *.env
+slideshow/devsettings.py
+*.pyc
+*.pyc
 *.sqlite3
 *.pyc
+<<<<<<< HEAD
 slideshow/devsettings.py
 >>>>>>> parent of c819125... Revert "Merge branch 'javascript' into staging"
+*.pyc
+=======
+slideshow/__pycache__/__init__.cpython-35.pyc
+>>>>>>> parent of a16404c... Revert "Merge branch 'api' into staging"
 *.pyc
