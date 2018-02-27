@@ -1,0 +1,228 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<title>Title Goes Here</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+</head>
+<body>
+	<style>
+	body {
+		background-image: linear-gradient(rgba(157, 189, 242, 0.5), rgba(229, 239, 255, 0.5));
+	}
+
+/*	.btn btn-primary btn-lg btn-block{
+
+	}*/
+	h1 {
+		text-align: center;
+	}
+
+	.loader {
+	    border: 6px solid #f3f3f3; /* Light grey */
+	    border-top: 6px solid #3498db; /* Blue */
+	    border-radius: 50%;
+	    width: 30px;
+	    height: 30px;
+	    animation: spin 2s linear infinite;
+	}
+
+	@keyframes spin {
+	    0% { transform: rotate(0deg); }
+	    100% { transform: rotate(360deg); }
+	}
+
+/*	.btn-block {
+		padding: 10%;
+	}*/
+
+	</style>
+	<h1>Name here</h1>
+	<div class="col-6 offset-3">
+		<input type="file" accept="image/*" id='photo-input' class="btn btn-primary btn-lg btn-block">
+		<br>
+		<button class="btn btn-primary btn-lg btn-block">admin</button>
+	</div>
+
+	<div class="modal fade photo-upload-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	  	<div class="modal-dialog modal-lg">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<h5 class="modal-title">Preview</h5>
+	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          			<span aria-hidden="true">&times;</span>
+	        		</button>
+	      		</div>
+      		<div class="modal-body-preview">
+        		<img id="preview-body" src="#">
+      		</div>
+	      	<div class="modal-footer">
+	        	<button type="button" id="image-submit" class="btn btn-primary">Submit</button>
+	        	<button type="button" id="modal-cancel" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	        	<button type="button" id="modal-download" class="btn btn-default" href="#" download>Save Image</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+
+	<div class="modal fade auth-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	  	<div class="modal-dialog modal-sm">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<h5 class="modal-title">Log In</h5>
+	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          			<span aria-hidden="true">&times;</span>
+	        		</button>
+	      		</div>
+      		<div class="modal-body-auth">
+      			<label for="username">Username: </label>
+        		<input type="text" id="username">
+        		<br>
+        		<label for="password">Password: </label>
+        		<input type="text" id="password">
+      		</div>
+	      	<div class="modal-footer">
+	      		<div id="loader"></div>
+	        	<button type="button" class="btn btn-primary" id="auth-submit">Submit</button>
+	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      		</div>
+    		</div>
+  		</div>
+	</div>
+</body>
+<script>
+	// if (!navigator.maxTouchPoints){
+	// 	alert("This app works best on a mobile browser!");
+	// }
+
+	let photoUpload = document.getElementById('photo-input');
+
+	photoUpload.addEventListener('change', function(e){
+		window.onbeforeunload = function(e) {
+            return true;
+        };
+	});
+
+	// photoUpload.addEventListener('click', function(e){
+	// 	if (!navigator.maxTouchPoints){
+	// 		e.preventDefault();
+	// 		alert("This app works best on a mobile browser!");
+	// 	}
+	// })
+
+	photoUpload.addEventListener('change', function(){
+		if (photoUpload.files && photoUpload.files[0]){
+			let reader = new FileReader();
+			reader.readAsDataURL(photoUpload.files[0]);
+			reader.onload = function(e){
+				document.getElementById('preview-body').setAttribute('src', e.target.result);
+				document.getElementById('modal-download').setAttribute('href', e.target.result);
+			}
+		}
+		$('.photo-upload-modal-lg').modal('show');
+	})
+
+	let imageSubmit = document.getElementById('image-submit');
+
+	//change to request policy document from backend and add event listener 
+	//to create file progress uploader
+	//add function to upload to s3 bucket
+	imageSubmit.addEventListener('click', function(e){
+		xhr.loadstart = function(){
+			let policyData = getPolicyData(photoUpload.files[0]);
+			window.onbeforeunload = function(e){
+				return true;
+			}
+			$('.photo-upload-modal-lg').modal('hide');
+		}
+		xhr.loadend = function(){
+			window.onbeforeunload = undefined;
+		}
+		xhr.send(document.getElementById('preview-body').getattribute('src'));
+	})
+
+	let authSubmit = document.getElementById('auth-submit');
+
+	authSubmit.addEventListener('click', function(){
+		let xhr = new XMLHttpRequest();
+		xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
+		xhr.open('POST', 'login-endpoint-here', false, document.getElementById('username'), 
+			document.getElementById('password'));
+		xhr.loadstart = function(){
+			document.getElementById('loader').classList.add('loader');
+			document.getElementById('auth-submit').disabled = true
+		}
+		xhr.loadend = function(){
+			document.getElementById('auth-submit').disabled = false
+			document.getElementById('loader').classList.remove('loader')
+		}
+		// use this to retrieve and set authentication tokens
+		xhr.onreadystatechange = function(){
+			if (xhr.readyState === 4){
+				console.log(xhr.response);
+			}
+		}
+		xhr.send();
+	})
+
+
+	function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function getPolicyData(file){
+    	let policyData;
+    	xhr = new XMLHttpRequest();
+    	xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
+    	xhr.open('POST', 'file-upload-policy-endpoint-here');
+    	// xhr.withCredentials = true;
+    	xhr.error = function(){
+    		alert('A problem occurred with your request. Please try again.')
+    	}
+    	xhr.onreadystatechange = function(){
+    		if (xhr.readyState === 4){
+    			policyData = xhr.response;
+    		}
+    	}
+    	xhr.send(file.name);
+    	return policyData;
+    }
+    	
+
+    function constructAWSFormPolicy(file, policyData){
+    	//define default data type if none present
+    	let contentType = file.type != '' ? fileItem.type : 'application/octet-stream';
+    	let url = policyData.url;
+    	let fileName = policyData.fileName;
+    	let user = policyData.user;
+    	let bucketPath = policyData.file_bucket_path;
+    	let fileData = new FormData();
+
+    	fileData.append('key', bucketPath + fileName);
+    	fileData.append('acl', 'private');
+    	fileData.append('Content-Type', contentType);
+    	fileData.append('AWSAccessKeyId', policyData.key);
+    	fileData.append('Policy', policyData.policy);
+    	fileData.append('filename', fileName);
+    	fileData.append('Signature', policyData.signature);
+    	fileData.append('file', file);
+    	return fileData
+
+    }
+
+    
+</script>
+</html>
