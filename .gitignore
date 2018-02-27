@@ -5,3 +5,5 @@ files/__pycache__/models.cpython-35.pyc
 *.pyc
 *.sqlite3
 *.env
+*.pyc
+*.pyc
