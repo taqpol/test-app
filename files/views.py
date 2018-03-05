@@ -6,6 +6,7 @@ from files.models import Image
 
 from django.contrib.auth import get_user_model
 
+
 class FileUploadView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [authentication.SessionAuthentication]
@@ -15,15 +16,16 @@ class FileUploadView(APIView):
         if not filename_req:
             return Response({"message": "A filename is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        if not request.user:
+            return Response({'message': 'You must be logged in to perform that action.'}, status=status.HTTP_401_UNAUTHORIZED)
+
         if not get_user_model().objects.get(name=request.user).is_active:
             return Response({'message': "You don't have permission to do that."}, status=status.HTTP_403_FORBIDDEN)
-        # elif filename_req.split('.')[-1] not in ['pdf', 'xlsx', 'xls', 'jpeg', 'jpg', 'png', 'dwf']:
-        #     return Response({"message": "Invalid file extension"}, status=status.HTTP_400_BAD_REQUEST)
 
         policy_expires = int(time.time()+5000)
         user = request.user
 
-        file_obj = Image.objects.create(user=user, name=filename_req)
+        file_obj = Image.objects.create(name=filename_req)
         file_obj_id = file_obj.id
         upload_start_path = "{username}/{file_obj_id}/".format(
                     username = request.user,
@@ -113,7 +115,11 @@ class FileUploadCompleteView(APIView):
         request.session['file_object_ids'].append(obj.id)
         request.session.modified = True
 
-        return Response(data, status=status.HTTP_200_OK)    
+        return Response(data, status=status.HTTP_200_OK)
+
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
+from slideshow.serializers import UserSerializer, GroupSerializer
 
 file_policy_view = FileUploadView.as_view()
 file_upload_complete_view = FileUploadCompleteView.as_view()

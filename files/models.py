@@ -4,7 +4,7 @@ import boto3
 
 class Image(models.Model):
     name = models.CharField(max_length=50)
-    path = models.TextField()
+    path = models.TextField(null=True, blank=True)
     uploaded_by = models.CharField(max_length=10, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     excluded = models.BooleanField(default=False)

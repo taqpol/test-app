@@ -37,12 +37,16 @@
 		padding: 10%;
 	}*/
 
+	#admin-login {
+		visibility: hidden
+	}
+
 	</style>
 	<h1>Name here</h1>
 	<div class="col-6 offset-3">
 		<input type="file" accept="image/*" id='photo-input' class="btn btn-primary btn-lg btn-block">
 		<br>
-		<button class="btn btn-primary btn-lg btn-block">admin</button>
+		<button class="btn btn-primary btn-lg btn-block" id="admin-login">admin</button>
 	</div>
 
 	<div class="modal fade photo-upload-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -81,7 +85,8 @@
         		<br>
         		<label for="password">Password: </label>
         		<input type="text" id="password">
-      		</div>
+        		<input type="hidden" name="csrfmiddlewaretoken" value="">
+       		</div>
 	      	<div class="modal-footer">
 	      		<div id="loader"></div>
 	        	<button type="button" class="btn btn-primary" id="auth-submit">Submit</button>
@@ -110,6 +115,10 @@
 	// 		alert("This app works best on a mobile browser!");
 	// 	}
 	// })
+
+	//document.getElementbyID('admin-login').style.visibility = 'visible';
+
+	$('.auth-modal-lg').modal('show')
 
 	photoUpload.addEventListener('change', function(){
 		if (photoUpload.files && photoUpload.files[0]){
@@ -146,9 +155,13 @@
 
 	authSubmit.addEventListener('click', function(){
 		let xhr = new XMLHttpRequest();
+		xhr.open('POST', 'http://127.0.0.1:8000/api-token-auth/', false);
+		let username = document.getElementById('username').value;
+		let password = document.getElementById('password').value;
+
+		let authPayload = {'username': username, 'password':password};
+
 		xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
-		xhr.open('POST', 'login-endpoint-here', false, document.getElementById('username'), 
-			document.getElementById('password'));
 		xhr.loadstart = function(){
 			document.getElementById('loader').classList.add('loader');
 			document.getElementById('auth-submit').disabled = true
@@ -160,10 +173,13 @@
 		// use this to retrieve and set authentication tokens
 		xhr.onreadystatechange = function(){
 			if (xhr.readyState === 4){
-				console.log(xhr.response);
+				document.cookie = xhr.response['token']
+				let jwtToken = xhr.response;
+				console.log(jwtToken)
+				console.log(document.cookie)
 			}
 		}
-		xhr.send();
+		xhr.send(JSON.stringify(authPayload));
 	})
 
 
@@ -183,11 +199,25 @@
         return cookieValue;
     }
 
+    function refreshToken(token){
+    	let xhr = new XMLHttpRequest();
+    	xhr.open('POST', true);
+    	xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
+    	xhr.error = function(){
+    		alert("You aren't authorized to perform that action.");
+    	}
+    	xhr.onreadystatechange = function(){
+    		if (xhr.readyState === 4){
+    			document.cookie = xhr.response;
+    		}
+    	}
+    }
+
     function getPolicyData(file){
     	let policyData;
     	xhr = new XMLHttpRequest();
-    	xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
     	xhr.open('POST', 'file-upload-policy-endpoint-here');
+    	xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
     	// xhr.withCredentials = true;
     	xhr.error = function(){
     		alert('A problem occurred with your request. Please try again.')
