@@ -84,7 +84,7 @@
         		<input type="text" id="username">
         		<br>
         		<label for="password">Password: </label>
-        		<input type="text" id="password">
+        		<input type="password" id="password">
         		<input type="hidden" name="csrfmiddlewaretoken" value="">
        		</div>
 	      	<div class="modal-footer">
@@ -173,10 +173,7 @@
 		// use this to retrieve and set authentication tokens
 		xhr.onreadystatechange = function(){
 			if (xhr.readyState === 4){
-				document.cookie = xhr.response['token']
-				let jwtToken = xhr.response;
-				console.log(jwtToken)
-				console.log(document.cookie)
+				document.cookie = JSON.parse(xhr.response)['token'];
 			}
 		}
 		xhr.send(JSON.stringify(authPayload));
