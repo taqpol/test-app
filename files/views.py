@@ -117,9 +117,5 @@ class FileUploadCompleteView(APIView):
 
         return Response(data, status=status.HTTP_200_OK)
 
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from slideshow.serializers import UserSerializer, GroupSerializer
-
 file_policy_view = FileUploadView.as_view()
 file_upload_complete_view = FileUploadCompleteView.as_view()
