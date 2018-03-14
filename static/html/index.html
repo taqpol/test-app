@@ -215,6 +215,7 @@
     	xhr = new XMLHttpRequest();
     	xhr.open('POST', 'file-upload-policy-endpoint-here');
     	xhr.setRequestHeader('Content-Type', 'application/JSON', 'charset=UTF-8');
+    	xhr.setRequestHeader('Authorization', 'JWT ' + document.cookie);
     	// xhr.withCredentials = true;
     	xhr.error = function(){
     		alert('A problem occurred with your request. Please try again.')
